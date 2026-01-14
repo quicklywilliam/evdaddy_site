@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EV Daddy - Your Voice-Activated Co-Pilot for EV Charging</title>
+  <meta name="description" content="Find reliable, compatible, fast EV chargers while you focus on the road. EV Daddy considers charge time, adapters, ratings, and nearby amenities.">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: linear-gradient(135deg, #fce7f3 0%, #e9d5ff 50%, #ddd6fe 100%);
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --accent-purple: #8B5CF6;
+      --accent-green: #22C55E;
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --input-bg: #ffffff;
+      --input-border: #d1d5db;
+      --subtitle-user-bg: rgba(139, 92, 246, 0.9);
+      --subtitle-ai-bg: rgba(31, 41, 55, 0.85);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: linear-gradient(135deg, #0f0d1a 0%, #1a1625 50%, #0f0d1a 100%);
+        --text-primary: #f9fafb;
+        --text-secondary: #9ca3af;
+        --card-bg: rgba(30, 27, 45, 0.8);
+        --input-bg: #1f1b2e;
+        --input-border: #374151;
+        --subtitle-user-bg: rgba(139, 92, 246, 0.95);
+        --subtitle-ai-bg: rgba(0, 0, 0, 0.8);
+      }
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .left-content {
+      flex: 1;
+      text-align: left;
+    }
+
+    .right-content {
+      flex-shrink: 0;
+    }
+
+    .icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 18px;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .features {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .features li {
+      position: relative;
+      padding-left: 1.75rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .features li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 280px;
+      border-radius: 36px;
+      padding: 8px;
+      background: #1a1a1a;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .left-content {
+        text-align: center;
+      }
+
+      .features {
+        display: inline-block;
+        text-align: left;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 24px;
+      background: #0a0a0a;
+      border-radius: 12px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .phone-screen video {
+      width: 100%;
+      display: block;
+    }
+
+    .subtitle-overlay {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      width: 90%;
+      text-align: center;
+    }
+
+    .subtitle {
+      display: inline-block;
+      padding: 0.6rem 1rem;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      max-width: 100%;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      color: white;
+    }
+
+    .subtitle.visible {
+      opacity: 1;
+    }
+
+    .subtitle.user {
+      background: var(--subtitle-user-bg);
+    }
+
+    .subtitle.ai {
+      background: var(--subtitle-ai-bg);
+    }
+
+    .subtitle .speaker {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+      margin-bottom: 0.2rem;
+      display: block;
+    }
+
+    .invite-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1.5rem;
+    }
+
+    .invite-section h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .invite-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .invite-input {
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      border: 2px solid var(--input-border);
+      border-radius: 12px;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      text-align: center;
+      transition: border-color 0.2s ease;
+    }
+
+    .invite-input:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+    }
+
+    .invite-input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .invite-button {
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .invite-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .invite-button:active {
+      transform: translateY(0);
+    }
+
+    .invite-error {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .invite-error.visible {
+      opacity: 1;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .invite-input.shake {
+      animation: shake 0.4s ease;
+      border-color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left-content">
+      <img src="assets/icon.png" alt="EV Daddy Icon" class="icon">
+      <h1>EV Daddy</h1>
+      <p class="tagline">Everyone could use a little help finding good EV chargers.</p>
+
+      <ul class="features">
+        <li>Easy to use</li>
+        <li>Considers ratings, adapters, routes and more</li>
+        <li>Works with CarPlay</li>
+      </ul>
+
+      <div class="invite-section">
+        <h2>Join the Beta</h2>
+        <form class="invite-form" id="invite-form">
+          <input
+            type="text"
+            class="invite-input"
+            id="invite-code"
+            placeholder="Enter invite code"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button type="submit" class="invite-button">Get Beta Access</button>
+          <p class="invite-error" id="invite-error">Invalid invite code</p>
+        </form>
+      </div>
+    </div>
+
+    <div class="right-content">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <video id="demo-video" autoplay muted loop playsinline>
+            <source src="assets/demo.mp4" type="video/mp4">
+          </video>
+          <div class="subtitle-overlay">
+            <div id="subtitle" class="subtitle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Encrypted TestFlight URL (injected by GitHub Action) -->
+  <script id="encrypted-data" type="application/json">{"encrypted":"PLACEHOLDER_ENCRYPTED_DATA","iv":"PLACEHOLDER_IV","salt":"PLACEHOLDER_SALT"}</script>
+
+  <script>
+    // ============================================
+    // SRT Parser
+    // ============================================
+    function parseSRT(srtText) {
+      const subtitles = [];
+      const blocks = srtText.trim().split(/\n\n+/);
+
+      for (const block of blocks) {
+        const lines = block.split('\n');
+        if (lines.length < 3) continue;
+
+        // Parse timestamp line (format: 00:00:00,000 --> 00:00:00,000)
+        const timeMatch = lines[1].match(
+          /(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/
+        );
+        if (!timeMatch) continue;
+
+        const start =
+          parseInt(timeMatch[1]) * 3600 +
+          parseInt(timeMatch[2]) * 60 +
+          parseInt(timeMatch[3]) +
+          parseInt(timeMatch[4]) / 1000;
+
+        const end =
+          parseInt(timeMatch[5]) * 3600 +
+          parseInt(timeMatch[6]) * 60 +
+          parseInt(timeMatch[7]) +
+          parseInt(timeMatch[8]) / 1000;
+
+        // Parse text (may be multiple lines)
+        const text = lines.slice(2).join(' ');
+
+        // Parse speaker tag [User]: or [AI]:
+        const speakerMatch = text.match(/^\[(\w+)\]:\s*(.*)$/);
+        let speaker = 'ai';
+        let content = text;
+
+        if (speakerMatch) {
+          speaker = speakerMatch[1].toLowerCase();
+          content = speakerMatch[2];
+        }
+
+        subtitles.push({ start, end, speaker, content });
+      }
+
+      return subtitles;
+    }
+
+    // ============================================
+    // Subtitle Display
+    // ============================================
+    let subtitles = [];
+    const video = document.getElementById('demo-video');
+    const subtitleEl = document.getElementById('subtitle');
+
+    async function loadSubtitles() {
+      try {
+        const response = await fetch('assets/subtitles.srt');
+        if (!response.ok) return;
+        const srtText = await response.text();
+        subtitles = parseSRT(srtText);
+      } catch (e) {
+        console.log('No subtitles file found');
+      }
+    }
+
+    function updateSubtitle() {
+      const time = video.currentTime;
+      const current = subtitles.find(s => time >= s.start && time < s.end);
+
+      if (current) {
+        const speakerLabel = current.speaker === 'user' ? 'You' : 'EV Daddy';
+        subtitleEl.innerHTML = `<span class="speaker">${speakerLabel}</span>${current.content}`;
+        subtitleEl.className = `subtitle visible ${current.speaker}`;
+      } else {
+        subtitleEl.className = 'subtitle';
+      }
+    }
+
+    video.addEventListener('timeupdate', updateSubtitle);
+    loadSubtitles();
+
+    // ============================================
+    // AES Decryption (Web Crypto API)
+    // ============================================
+    async function deriveKey(password, salt) {
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(password),
+        'PBKDF2',
+        false,
+        ['deriveKey']
+      );
+
+      return crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      );
+    }
+
+    async function decrypt(encryptedData, iv, salt, password) {
+      try {
+        const key = await deriveKey(password, salt);
+        const decrypted = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv: iv },
+          key,
+          encryptedData
+        );
+        return new TextDecoder().decode(decrypted);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function base64ToArrayBuffer(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+
+    // ============================================
+    // Form Handler
+    // ============================================
+    const form = document.getElementById('invite-form');
+    const input = document.getElementById('invite-code');
+    const error = document.getElementById('invite-error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const code = input.value.trim();
+      if (!code) {
+        showError();
+        return;
+      }
+
+      try {
+        const dataEl = document.getElementById('encrypted-data');
+        const data = JSON.parse(dataEl.textContent);
+
+        if (data.encrypted === 'PLACEHOLDER_ENCRYPTED_DATA') {
+          // Development mode - no encryption set up yet
+          console.log('Encryption not configured. Set up GitHub secrets.');
+          showError();
+          return;
+        }
+
+        const encrypted = base64ToArrayBuffer(data.encrypted);
+        const iv = base64ToArrayBuffer(data.iv);
+        const salt = base64ToArrayBuffer(data.salt);
+
+        const url = await decrypt(encrypted, iv, salt, code);
+
+        if (url && url.startsWith('https://')) {
+          window.location.href = url;
+        } else {
+          showError();
+        }
+      } catch (e) {
+        showError();
+      }
+    });
+
+    function showError() {
+      input.classList.add('shake');
+      error.classList.add('visible');
+
+      setTimeout(() => {
+        input.classList.remove('shake');
+      }, 400);
+
+      setTimeout(() => {
+        error.classList.remove('visible');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
