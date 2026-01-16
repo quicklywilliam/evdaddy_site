@@ -1,27 +1,16 @@
 1
-00:00:01,000 --> 00:00:03,500
-[AI]: Where are you going?
+00:00:03,100 --> 00:00:07,220
+[User]: I'm heading to Seattle and I need to charge in about 100 miles.
 
 2
-00:00:04,000 --> 00:00:06,000
-[User]: Portland airport
+00:00:28,020 --> 00:00:58,140
+[AI]: I found three fast charging options. Your best option is the Centralia Outlets Tesla Supercharger, rated 4.65. It's fast and has nearby restrooms, food, and shopping. Which station would you like more details on?
 
 3
-00:00:07,000 --> 00:00:11,000
-[AI]: I found 3 fast chargers on your route
+00:00:56,520 --> 00:00:61,060
+[User]: Show me the Tesla option.
 
 4
-00:00:11,500 --> 00:00:15,000
-[AI]: The best one is Electrify America at Walmart
+00:01:04,200 --> 00:01:18,760
+[AI]: The Tesla option has 250 kilowatts charging speed, which you can use with your Tesla adapter. There's a Starbucks and some Japanese food nearby.
 
-5
-00:00:15,500 --> 00:00:19,000
-[AI]: 350 kilowatts, 2.3 miles away, rated 4.5 stars
-
-6
-00:00:20,000 --> 00:00:22,000
-[User]: What's nearby?
-
-7
-00:00:22,500 --> 00:00:26,000
-[AI]: There's a Starbucks and McDonald's within walking distance
