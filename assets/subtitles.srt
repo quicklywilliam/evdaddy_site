@@ -1,16 +1,16 @@
 1
-00:00:01,100 --> 00:00:07,220
+00:00:01,100 --> 00:00:02,820
 [User]: I'm heading to Seattle and I need to charge in about 100 miles.
 
 2
-00:00:10,020 --> 00:00:18,140
+00:00:10,020 --> 00:00:14,140
 [AI]: I found three fast charging options. Your best option is the Centralia Outlets Tesla Supercharger, rated 4.65. It's fast and has nearby restrooms, food, and shopping. Which station would you like more details on?
 
 3
-00:00:21,520 --> 00:00:25,060
+00:00:21,520 --> 00:00:22,060
 [User]: Show me the Tesla option.
 
 4
-00:00:28,200 --> 00:00:26,760
+00:00:28,200 --> 00:00:32,760
 [AI]: The Tesla option has 250 kilowatts charging speed, which you can use with your Tesla adapter. There's a Starbucks and some Japanese food nearby.
 

@@ -611,11 +611,27 @@
 
       const bubble = document.createElement('div');
       bubble.className = `chat-bubble ${sub.speaker}`;
-      bubble.textContent = sub.content;
+      bubble.textContent = '';
 
       row.appendChild(bubble);
       chatContainer.appendChild(row);
       chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // Type out the text
+      const text = sub.content;
+      const duration = (sub.end - sub.start) * 1000; // ms
+      const charDelay = Math.max(10, duration / text.length);
+      let i = 0;
+
+      function typeChar() {
+        if (i < text.length) {
+          bubble.textContent += text[i];
+          i++;
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+          setTimeout(typeChar, charDelay);
+        }
+      }
+      typeChar();
     }
 
     function resetChat() {
